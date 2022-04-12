@@ -1,0 +1,45 @@
+```CSHARP
+string requestURL = "https://b2c.csair.com/portal/minPrice/queryMinPriceInSeven";
+using (var client = new HttpClient())
+{
+    //添加头部
+    client.DefaultRequestHeaders.Add("Method", "POST");
+    client.DefaultRequestHeaders.Add("KeepAlive", "false");
+    client.DefaultRequestHeaders.Add("Refer", "https://www.csair.com/cn/");
+    client.DefaultRequestHeaders.Add("UserAgent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
+
+    //构造请求参数
+    dynamic queryParam = new ExpandoObject();
+    queryParam.action = 0;                  //未知？
+    queryParam.adultNum = 1;                //成人数量
+    queryParam.childNum = 0;                //儿童数量
+    queryParam.airLine = 1;                 //未知？
+    queryParam.arr = "XIY";                 //目的地：西安
+    queryParam.arrCity = "";                //目的地名称
+    queryParam.cabinOrder = 0;              //座舱号
+    queryParam.cache = 0;                   //缓存标记？
+    queryParam.channel = "B2CPC1";          //未知？
+    queryParam.dep = "DLC";                 //出发地：大连
+    queryParam.depCity = "";                //出发地名称
+    queryParam.flightDate = "2022-04-22";   //航班日期
+    queryParam.flyType = 3;                 //类型：直飞
+    queryParam.infantNum = 0;               //婴儿数量
+    queryParam.international = 0;           //是否国际航班，0非国际，1国际
+    queryParam.segType = 1;                 //未知？
+
+    //定义请求体
+    HttpContent content = new StringContent(JsonConvert.SerializeObject(queryParam), Encoding.UTF8, "application/json");
+
+    //发送请求
+    HttpResponseMessage response = client.PostAsync(requestURL, content).Result;
+
+    //确认请求成功
+    response.EnsureSuccessStatusCode();
+
+    //读取相应字符串
+    string responseBody = response.Content.ReadAsStringAsync().Result;
+
+    //反序列化数据
+    var result = JsonConvert.DeserializeObject<FetchResultData>(responseBody);
+}
+```
